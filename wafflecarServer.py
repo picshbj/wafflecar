@@ -154,7 +154,7 @@ prevCmd = '0'
 while True:
 	try:
 		# get commands from the user
-		data, addr = server_socket.recvfrom(10)
+		data, addr = server_socket.recvfrom(15)
 		
 		# send distance data to the user
 		server_socket.sendto(getDistance(), addr)
@@ -189,15 +189,15 @@ while True:
 
 				if comm[2][0] == 'F': # forward
 					# set left wheel speed
-					if comm[1][1] == '1':
+					if comm[2][1] == '1':
 						servoCmd = '''fast-gpio pwm 16 100 90;
 						fast-gpio pwm 15 0 0
 						'''
-					elif comm[1][1] == '2':
+					elif comm[2][1] == '2':
 						servoCmd = '''fast-gpio pwm 16 100 50;
 						fast-gpio pwm 15 0 0
 						'''
-					elif comm[1][1] == '3':
+					elif comm[2][1] == '3':
 						servoCmd = '''fast-gpio pwm 16 100 0;
 						fast-gpio pwm 15 0 0
 						'''
