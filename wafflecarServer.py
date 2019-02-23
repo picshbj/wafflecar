@@ -48,29 +48,54 @@ def getDistance():
 	return '%04d' % distance
 
 def vehicle_backward():
-	gpio11.setValue(0)
-	gpio17.setValue(1)
-	gpio16.setValue(0)
-	gpio15.setValue(1)
+	servoCmd = '''fast-gpio pwm 11 0 0;
+	fast-gpio pwm 17 100 90;
+	fast-gpio pwm 16 0 0;
+	fast-gpio pwm 15 100 90
+	'''
+	os.system(servoCmd)
+	# gpio11.setValue(0)
+	# gpio17.setValue(1)
+	# gpio16.setValue(0)
+	# gpio15.setValue(1)
+	
     
 def vehicle_forward():
-	gpio11.setValue(1)
-	gpio17.setValue(0)
-	gpio16.setValue(1)
-	gpio15.setValue(0)
+	servoCmd = '''fast-gpio pwm 11 100 90;
+	fast-gpio pwm 17 0 0;
+	fast-gpio pwm 16 100 90;
+	fast-gpio pwm 15 0 0
+	'''
+	os.system(servoCmd)
+	# gpio11.setValue(1)
+	# gpio17.setValue(0)
+	# gpio16.setValue(1)
+	# gpio15.setValue(0)
 
 def vehicle_stop():
-	gpio11.setValue(0)
-	gpio17.setValue(0)
-	gpio16.setValue(0)
-	gpio15.setValue(0)
+	servoCmd = '''fast-gpio pwm 11 0 0;
+	fast-gpio pwm 17 0 0;
+	fast-gpio pwm 16 0 0;
+	fast-gpio pwm 15 0 0
+	'''
+	os.system(servoCmd)
+	# gpio11.setValue(0)
+	# gpio17.setValue(0)
+	# gpio16.setValue(0)
+	# gpio15.setValue(0)
 	vehicle_turn(150)
 
 def vehicle_steeringTest():
-	gpio11.setValue(0)
-	gpio17.setValue(0)
-	gpio16.setValue(0)
-	gpio15.setValue(0)
+	servoCmd = '''fast-gpio pwm 11 0 0;
+	fast-gpio pwm 17 0 0;
+	fast-gpio pwm 16 0 0;
+	fast-gpio pwm 15 0 0
+	'''
+	os.system(servoCmd)
+	# gpio11.setValue(0)
+	# gpio17.setValue(0)
+	# gpio16.setValue(0)
+	# gpio15.setValue(0)
 
 def vehicle_turn(angle):
     # 140 - 160
@@ -144,16 +169,81 @@ while True:
 				# power control
 				if comm[1][0] == 'F': # forward
 					# set right wheel speed
-					pass
+					if comm[1][1] == '1':
+						servoCmd = '''fast-gpio pwm 11 100 90;
+						fast-gpio pwm 17 0 0
+						'''
+					elif comm[1][1] == '2':
+						servoCmd = '''fast-gpio pwm 11 100 50;
+						fast-gpio pwm 17 0 0
+						'''
+					elif comm[1][1] == '3':
+						servoCmd = '''fast-gpio pwm 11 100 0;
+						fast-gpio pwm 17 0 0
+						'''
+					else:
+						servoCmd = '''fast-gpio pwm 11 0 0;
+						fast-gpio pwm 17 0 0
+						'''
+					os.system(servoCmd)
+
 				if comm[2][0] == 'F': # forward
 					# set left wheel speed
-					pass
+					if comm[1][1] == '1':
+						servoCmd = '''fast-gpio pwm 16 100 90;
+						fast-gpio pwm 15 0 0
+						'''
+					elif comm[1][1] == '2':
+						servoCmd = '''fast-gpio pwm 16 100 50;
+						fast-gpio pwm 15 0 0
+						'''
+					elif comm[1][1] == '3':
+						servoCmd = '''fast-gpio pwm 16 100 0;
+						fast-gpio pwm 15 0 0
+						'''
+					else:
+						servoCmd = '''fast-gpio pwm 16 0 0;
+						fast-gpio pwm 15 0 0
+						'''
+					os.system(servoCmd)
 				if comm[1][0] == 'B': # backward
 					# set right wheel speed
-					pass
+					if comm[1][1] == '1':
+						servoCmd = '''fast-gpio pwm 11 0 0;
+						fast-gpio pwm 17 100 90
+						'''
+					elif comm[1][1] == '2':
+						servoCmd = '''fast-gpio pwm 11 0 0;
+						fast-gpio pwm 17 100 50
+						'''
+					elif comm[1][1] == '3':
+						servoCmd = '''fast-gpio pwm 11 0 0;
+						fast-gpio pwm 17 100 0
+						'''
+					else:
+						servoCmd = '''fast-gpio pwm 11 0 0;
+						fast-gpio pwm 17 0 0
+						'''
+					os.system(servoCmd)
 				if comm[2][0] == 'B': # backward
 					# set left wheel speed
-					pass
+					if comm[1][1] == '1':
+						servoCmd = '''fast-gpio pwm 16 0 0;
+						fast-gpio pwm 15 100 90
+						'''
+					elif comm[1][1] == '2':
+						servoCmd = '''fast-gpio pwm 16 0 0;
+						fast-gpio pwm 15 100 50
+						'''
+					elif comm[1][1] == '3':
+						servoCmd = '''fast-gpio pwm 16 0 0;
+						fast-gpio pwm 15 100 0
+						'''
+					else:
+						servoCmd = '''fast-gpio pwm 16 0 0;
+						fast-gpio pwm 15 0 0
+						'''
+					os.system(servoCmd)
 				
 				# steering wheel angle
 				vehicle_turn(int(comm[3]))
