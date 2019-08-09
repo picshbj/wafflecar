@@ -49,9 +49,9 @@ def getDistance():
 
 def vehicle_backward():
 	servoCmd = '''fast-gpio pwm 14 0 0;
-	fast-gpio pwm 17 100 90;
+	fast-gpio pwm 17 100 50;
 	fast-gpio pwm 16 0 0;
-	fast-gpio pwm 15 100 90
+	fast-gpio pwm 15 100 50
 	'''
 	os.system(servoCmd)
 	# gpio14.setValue(0)
@@ -61,9 +61,9 @@ def vehicle_backward():
 	
     
 def vehicle_forward():
-	servoCmd = '''fast-gpio pwm 14 100 90;
+	servoCmd = '''fast-gpio pwm 14 100 50;
 	fast-gpio pwm 17 0 0;
-	fast-gpio pwm 16 100 90;
+	fast-gpio pwm 16 100 50;
 	fast-gpio pwm 15 0 0
 	'''
 	os.system(servoCmd)
