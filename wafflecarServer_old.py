@@ -13,13 +13,13 @@ server_address = ('192.168.3.1', 19126)
 stopTimerVal= 0
 i2c = onionI2C.OnionI2C()
 
-def pwm_init():
-	print('[Alert] Starting servo motor initialization..')
-	os.system('omega2-ctrl gpiomux set pwm0 pwm')
-	time.sleep(1)
-	os.system('omega2-ctrl gpiomux set pwm1 pwm')
-	time.sleep(1)
-	print('[Alert] Servo motor initialization finished..')
+# def pwm_init():
+# 	print('[Alert] Starting servo motor initialization..')
+# 	os.system('omega2-ctrl gpiomux set pwm0 pwm')
+# 	time.sleep(1)
+# 	os.system('omega2-ctrl gpiomux set pwm1 pwm')
+# 	time.sleep(1)
+# 	print('[Alert] Servo motor initialization finished..')
 
 def gpio_init():
 	print('[Alert] Strat gpio pins for DC motor are initialized..')
@@ -53,7 +53,7 @@ def vehicle_backward():
 	fast-gpio pwm 16 0 0;
 	fast-gpio pwm 15 100 70
 	'''
-	os.system(servoCmd)
+	#os.system(servoCmd)
 	# gpio11.setValue(0)
 	# gpio17.setValue(1)
 	# gpio16.setValue(0)
@@ -66,7 +66,7 @@ def vehicle_forward():
 	fast-gpio pwm 16 100 70;
 	fast-gpio pwm 15 0 0
 	'''
-	os.system(servoCmd)
+	#os.system(servoCmd)
 	# gpio11.setValue(1)
 	# gpio17.setValue(0)
 	# gpio16.setValue(1)
@@ -78,7 +78,7 @@ def vehicle_stop():
 	fast-gpio pwm 16 0 0;
 	fast-gpio pwm 15 0 0
 	'''
-	os.system(servoCmd)
+	#os.system(servoCmd)
 	# gpio11.setValue(0)
 	# gpio17.setValue(0)
 	# gpio16.setValue(0)
@@ -91,7 +91,7 @@ def vehicle_steeringTest():
 	fast-gpio pwm 16 0 0;
 	fast-gpio pwm 15 0 0
 	'''
-	os.system(servoCmd)
+	#os.system(servoCmd)
 	# gpio11.setValue(0)
 	# gpio17.setValue(0)
 	# gpio16.setValue(0)
@@ -108,7 +108,7 @@ def vehicle_turn(angle):
     # The servo motor of wafflecar supports 12.6 to 16.5, and 14.0 is center. (The range of Jajucha steering angle is 140 to 160)
     # In order to keep coincident with Jajucha protocol, 10 will be subtracted.
     servoCmd = 'onion pwm 0 %0.1f 60' % ((angle-10)/10.0)
-    os.system(servoCmd)
+    #os.system(servoCmd)
     
 def stopTimer():
 	global stopTimerVal
@@ -185,7 +185,7 @@ while True:
 						servoCmd = '''fast-gpio pwm 11 0 0;
 						fast-gpio pwm 17 0 0
 						'''
-					os.system(servoCmd)
+					#os.system(servoCmd)
 
 				if comm[2][0] == 'F': # forward
 					# set left wheel speed
@@ -205,7 +205,7 @@ while True:
 						servoCmd = '''fast-gpio pwm 16 0 0;
 						fast-gpio pwm 15 0 0
 						'''
-					os.system(servoCmd)
+					#os.system(servoCmd)
 				if comm[1][0] == 'B': # backward
 					# set right wheel speed
 					if comm[1][1] == '1':
@@ -224,7 +224,7 @@ while True:
 						servoCmd = '''fast-gpio pwm 11 0 0;
 						fast-gpio pwm 17 0 0
 						'''
-					os.system(servoCmd)
+					#os.system(servoCmd)
 				if comm[2][0] == 'B': # backward
 					# set left wheel speed
 					if comm[1][1] == '1':
@@ -243,7 +243,7 @@ while True:
 						servoCmd = '''fast-gpio pwm 16 0 0;
 						fast-gpio pwm 15 0 0
 						'''
-					os.system(servoCmd)
+					#os.system(servoCmd)
 				
 				# steering wheel angle
 				vehicle_turn(int(comm[3]))
