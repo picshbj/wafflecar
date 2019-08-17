@@ -13,13 +13,13 @@ server_address = ('192.168.3.1', 19126)
 stopTimerVal= 0
 i2c = onionI2C.OnionI2C()
 
-# def pwm_init():
-# 	print('[Alert] Starting servo motor initialization..')
-# 	os.system('omega2-ctrl gpiomux set pwm0 pwm')
-# 	time.sleep(1)
-# 	os.system('omega2-ctrl gpiomux set pwm1 pwm')
-# 	time.sleep(1)
-# 	print('[Alert] Servo motor initialization finished..')
+def pwm_init():
+	print('[Alert] Starting servo motor initialization..')
+	#os.system('omega2-ctrl gpiomux set pwm0 pwm')
+	time.sleep(1)
+	#os.system('omega2-ctrl gpiomux set pwm1 pwm')
+	time.sleep(1)
+	print('[Alert] Servo motor initialization finished..')
 
 def gpio_init():
 	print('[Alert] Strat gpio pins for DC motor are initialized..')
