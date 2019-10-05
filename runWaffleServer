@@ -5,7 +5,7 @@ STOP=15
 
 start() {        
         echo start
-        /root/wafflecarServer.py
+        python /root/wafflecarServer.py
 }                 
 
 stop() {          
