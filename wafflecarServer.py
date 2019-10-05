@@ -5,7 +5,7 @@ import io
 import time
 import struct
 import os
-import onionGpio
+#import onionGpio
 import threading
 import signal
 import sys
