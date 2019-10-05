@@ -1,0 +1,13 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=15
+
+start() {        
+        echo start
+        /root/wafflecarServer.py
+}                 
+
+stop() {          
+        echo stop
+}
