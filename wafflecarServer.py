@@ -121,21 +121,21 @@ def getDistance():
 
 def vehicle_backward():
     # Motor 1
-    pwm.set_pwm(5, 1500, 2048)
+    pwm.set_pwm(5, 900, 2048)
     pwm.set_pwm(4, 0, 4096)
     
     # Motor 2
-    pwm.set_pwm(3, 1500, 2048)
+    pwm.set_pwm(3, 900, 2048)
     pwm.set_pwm(2, 0, 4096)
     
     
 def vehicle_forward():
     # Motor 1
-    pwm.set_pwm(4, 1500, 2048)
+    pwm.set_pwm(4, 900, 2048)
     pwm.set_pwm(5, 0, 4096)
     
     # Motor 2
-    pwm.set_pwm(2, 1500, 2048)
+    pwm.set_pwm(2, 900, 2048)
     pwm.set_pwm(3, 0, 4096)
     
 
