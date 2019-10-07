@@ -156,16 +156,16 @@ def vehicle_steeringTest():
 
 def vehicle_turn(angle):
     # servo_min = 440 # 100 is minimum
-    # servo_mid = 480
-    # servo_max = 520
+    # servo_mid = 490
+    # servo_max = 540
     
-    # input angle -> 110 ~ 190
-    angle += 330
+    # input angle -> 100 ~ 200
+    angle += 340
     
     if angle < 440:
         angle = 440
-    elif angle > 520:
-        angle = 520
+    elif angle > 540:
+        angle = 540
         
     pwm.set_pwm(0, 0, angle)
 
