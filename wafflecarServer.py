@@ -3,7 +3,7 @@ import io
 import time
 import struct
 import os
-#import onionGpio
+import onionGpio
 import threading
 import signal
 import sys
@@ -121,21 +121,21 @@ def getDistance():
 
 def vehicle_backward():
     # Motor 1
-    pwm.set_pwm(5, 900, 2048)
+    pwm.set_pwm(5, 1500, 2048)
     pwm.set_pwm(4, 0, 4096)
     
     # Motor 2
-    pwm.set_pwm(3, 900, 2048)
+    pwm.set_pwm(3, 1500, 2048)
     pwm.set_pwm(2, 0, 4096)
     
     
 def vehicle_forward():
     # Motor 1
-    pwm.set_pwm(4, 900, 2048)
+    pwm.set_pwm(4, 1500, 2048)
     pwm.set_pwm(5, 0, 4096)
     
     # Motor 2
-    pwm.set_pwm(2, 900, 2048)
+    pwm.set_pwm(2, 1500, 2048)
     pwm.set_pwm(3, 0, 4096)
     
 
@@ -156,16 +156,16 @@ def vehicle_steeringTest():
 
 def vehicle_turn(angle):
     # servo_min = 440 # 100 is minimum
-    # servo_mid = 490
-    # servo_max = 540
+    # servo_mid = 480
+    # servo_max = 520
     
-    # input angle -> 100 ~ 200
-    angle += 340
+    # input angle -> 110 ~ 190
+    angle += 330
     
     if angle < 440:
         angle = 440
-    elif angle > 540:
-        angle = 540
+    elif angle > 520:
+        angle = 520
         
     pwm.set_pwm(0, 0, angle)
 
@@ -190,122 +190,139 @@ def signal_handler(signal, frame):
     
 ########################
     
-    
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+
+def startServer(connection, client_address, sendComm):
+    global stopTimerVal
+    try:
+        prevCmd = '0'
+        while True:
+            data = sendComm.recv(16)
+            sendComm.sendall(getDistance())
+            stopTimerVal = 0
+                
+            if data[0] == 'H':
+                comm = data.split(',')
+                # correct command input
+                if comm[0] == 'H' and comm[4] == 'E':
+                    
+                    # power control
+                    if comm[1][0] == 'F': # forward
+                        # set right wheel speed (Motor 2)
+                        if comm[1][1] == '1':
+                            pwm.set_pwm(2, 900, 2048)
+                            pwm.set_pwm(3, 0, 4096)
+                        elif comm[1][1] == '2':
+                            pwm.set_pwm(2, 100, 2048)
+                            pwm.set_pwm(3, 0, 4096)
+                        elif comm[1][1] == '3':
+                            pwm.set_pwm(2, 4096, 0)
+                            pwm.set_pwm(3, 0, 4096)
+                        else:
+                            pwm.set_pwm(2, 0, 0)
+                            pwm.set_pwm(3, 0, 0)
+
+                    if comm[2][0] == 'F': # forward
+                        # set left wheel speed (Motor 1)
+                        if comm[2][1] == '1':
+                            pwm.set_pwm(4, 900, 2048)
+                            pwm.set_pwm(5, 0, 4096)
+                        elif comm[2][1] == '2':
+                            pwm.set_pwm(4, 100, 2048)
+                            pwm.set_pwm(5, 0, 4096)
+                        elif comm[2][1] == '3':
+                            pwm.set_pwm(4, 4096, 0)
+                            pwm.set_pwm(5, 0, 4096)
+                        else:
+                            pwm.set_pwm(4, 0, 0)
+                            pwm.set_pwm(5, 0, 0)
+                            
+                    if comm[1][0] == 'B': # backward
+                        # set right wheel speed (Motor 2)
+                        if comm[1][1] == '1':
+                            pwm.set_pwm(3, 900, 2048)
+                            pwm.set_pwm(2, 0, 4096)
+                        elif comm[1][1] == '2':
+                            pwm.set_pwm(3, 100, 2048)
+                            pwm.set_pwm(2, 0, 4096)
+                        elif comm[1][1] == '3':
+                            pwm.set_pwm(3, 4096, 0)
+                            pwm.set_pwm(2, 0, 4096)
+                        else:
+                            pwm.set_pwm(3, 0, 0)
+                            pwm.set_pwm(2, 0, 0)
+                    if comm[2][0] == 'B': # backward
+                        # set left wheel speed (Motor 1)
+                        if comm[2][1] == '1':
+                            pwm.set_pwm(5, 900, 2048)
+                            pwm.set_pwm(4, 0, 4096)
+                        elif comm[2][1] == '2':
+                            pwm.set_pwm(5, 100, 2048)
+                            pwm.set_pwm(4, 0, 4096)
+                        elif comm[2][1] == '3':
+                            pwm.set_pwm(5, 4096, 0)
+                            pwm.set_pwm(4, 0, 4096)
+                        else:
+                            pwm.set_pwm(5, 0, 0)
+                            pwm.set_pwm(4, 0, 0)
+                            
+                    # steering wheel angle
+                    vehicle_turn(int(comm[3]))
+                    
+                else: # incorrect command input
+                    print('invalid command received', data)
+                    
+            # low level command protocol
+            elif data[0] == 'L':
+                # low level command protocol does not support wheel speed control.
+                if len(data) is 6 and data[5] == 'E':
+                    # power control
+                    if data[1] == '0' and prevCmd != data[1]:
+                        vehicle_stop()
+                        prevCmd = data[1]
+                    elif data[1] == '1' and prevCmd != data[1]:
+                        vehicle_forward()
+                        prevCmd = data[1]
+                    elif data[1] == '2' and prevCmd != data[1]:
+                        vehicle_backward()
+                        prevCmd = data[1]
+                    elif data[1] == '3' and prevCmd != data[1]:
+                        vehicle_steeringTest()
+                        prevCmd = data[1]
+                        
+                    vehicle_turn(int(data[2:5]))
+                else:
+                    print('invalid command received: ', data)
+
+            # low level command protocol
+            elif data[0] == 'Q':
+                break            
+    finally:
+        print('[Server] Closing the connection...')
+        connection.close()
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_socket.bind(server_address)
-print('[Alert] Server initialized...')
+
+stopTimer()
+signal.signal(signal.SIGINT, signal_handler)
+
+while True:
+    print('[Server] ### Listening for connection...')
+    server_socket.listen(1)
+    connection, client_address = server_socket.accept()
+    sendComm = connection
+    connection = connection.makefile('wb')
+    vehicle_stop()
+    time.sleep(1) # GPIO warmup
+    try:
+        print('[Server] %s is now connected.' % client_address[0])
+        startServer(connection, client_address, sendComm)
+    except Exception as e:
+        print('[Server] ERROR: %s' % e)
+    finally:
+        print('[Server] %s is now disconnected.' % client_address[0])
+        time.sleep(2)
 
 vehicle_stop()
-
-# timer start
-stopTimer()
-
-# main start
-signal.signal(signal.SIGINT, signal_handler)
-prevCmd = '0'
-while True:
-    try:
-        # get commands from the user
-        data, addr = server_socket.recvfrom(16)
-        
-        # send distance data to the user
-        server_socket.sendto(getDistance(), addr)
-        
-        # high level command protocol
-        if data[0] == 'H':
-            comm = data.split(',')
-            # correct command input
-            if comm[0] == 'H' and comm[4] == 'E':
-                stopTimerVal = 0
-                
-                # power control
-                if comm[1][0] == 'F': # forward
-                    # set right wheel speed (Motor 2)
-                    if comm[1][1] == '1':
-                        pwm.set_pwm(2, 900, 2048)
-                        pwm.set_pwm(3, 0, 4096)
-                    elif comm[1][1] == '2':
-                        pwm.set_pwm(2, 100, 2048)
-                        pwm.set_pwm(3, 0, 4096)
-                    elif comm[1][1] == '3':
-                        pwm.set_pwm(2, 4096, 0)
-                        pwm.set_pwm(3, 0, 4096)
-                    else:
-                        pwm.set_pwm(2, 0, 0)
-                        pwm.set_pwm(3, 0, 0)
-
-                if comm[2][0] == 'F': # forward
-                    # set left wheel speed (Motor 1)
-                    if comm[2][1] == '1':
-                        pwm.set_pwm(4, 900, 2048)
-                        pwm.set_pwm(5, 0, 4096)
-                    elif comm[2][1] == '2':
-                        pwm.set_pwm(4, 100, 2048)
-                        pwm.set_pwm(5, 0, 4096)
-                    elif comm[2][1] == '3':
-                        pwm.set_pwm(4, 4096, 0)
-                        pwm.set_pwm(5, 0, 4096)
-                    else:
-                        pwm.set_pwm(4, 0, 0)
-                        pwm.set_pwm(5, 0, 0)
-                        
-                if comm[1][0] == 'B': # backward
-                    # set right wheel speed (Motor 2)
-                    if comm[1][1] == '1':
-                        pwm.set_pwm(3, 900, 2048)
-                        pwm.set_pwm(2, 0, 4096)
-                    elif comm[1][1] == '2':
-                        pwm.set_pwm(3, 100, 2048)
-                        pwm.set_pwm(2, 0, 4096)
-                    elif comm[1][1] == '3':
-                        pwm.set_pwm(3, 4096, 0)
-                        pwm.set_pwm(2, 0, 4096)
-                    else:
-                        pwm.set_pwm(3, 0, 0)
-                        pwm.set_pwm(2, 0, 0)
-                if comm[2][0] == 'B': # backward
-                    # set left wheel speed (Motor 1)
-                    if comm[2][1] == '1':
-                        pwm.set_pwm(5, 900, 2048)
-                        pwm.set_pwm(4, 0, 4096)
-                    elif comm[2][1] == '2':
-                        pwm.set_pwm(5, 100, 2048)
-                        pwm.set_pwm(4, 0, 4096)
-                    elif comm[2][1] == '3':
-                        pwm.set_pwm(5, 4096, 0)
-                        pwm.set_pwm(4, 0, 4096)
-                    else:
-                        pwm.set_pwm(5, 0, 0)
-                        pwm.set_pwm(4, 0, 0)
-                        
-                # steering wheel angle
-                vehicle_turn(int(comm[3]))
-                
-            else: # incorrect command input
-                print('invalid command received', data)
-                
-        # low level command protocol
-        elif data[0] == 'L':
-            # low level command protocol does not support wheel speed control.
-            if len(data) is 6 and data[5] == 'E':
-                stopTimerVal = 0
-                # power control
-                if data[1] == '0' and prevCmd != data[1]:
-                    vehicle_stop()
-                    prevCmd = data[1]
-                elif data[1] == '1' and prevCmd != data[1]:
-                    vehicle_forward()
-                    prevCmd = data[1]
-                elif data[1] == '2' and prevCmd != data[1]:
-                    vehicle_backward()
-                    prevCmd = data[1]
-                elif data[1] == '3' and prevCmd != data[1]:
-                    vehicle_steeringTest()
-                    prevCmd = data[1]
-                    
-                vehicle_turn(int(data[2:5]))
-            else:
-                print('invalid command received: ', data)
-                
-    except Exception as e:
-        print('Error: ', e)
+server_socket.close()
