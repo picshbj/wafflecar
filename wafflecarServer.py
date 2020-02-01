@@ -147,25 +147,25 @@ def vehicle_stop():
     # Motor 2
     pwm.set_pwm(2, 0, 0)
     pwm.set_pwm(3, 0, 0)
-    
-    
+        
     vehicle_turn(150)
 
 def vehicle_steeringTest():
     pass
 
 def vehicle_turn(angle):
+    global servoDefaultValue
     # servo_min = 440 # 100 is minimum
     # servo_mid = 480
     # servo_max = 520
     
     # input angle -> 110 ~ 190
-    angle += 330
-    
-    if angle < 440:
-        angle = 440
-    elif angle > 520:
-        angle = 520
+    if angle < 110:
+        angle = 110
+    elif angle > 190:
+        angle = 190
+
+    angle = angle + servoDefaultValue
         
     pwm.set_pwm(0, 0, angle)
 
@@ -194,6 +194,7 @@ def signal_handler(signal, frame):
 
 def startServer(connection, client_address, sendComm):
     global stopTimerVal
+    global servoDefaultValue
     try:
         prevCmd = '0'
         while True:
@@ -296,7 +297,18 @@ def startServer(connection, client_address, sendComm):
 
             # low level command protocol
             elif data[0] == 'Q':
-                break            
+                break
+
+            # set servo angle
+            elif data[0] == 'S':
+                if len(data) is 5 and data[4] == 'E':
+                    servoDefaultValue = int(data[1:4])
+                    try:
+                        f = open('servoDefaultValue.txt', 'w')
+                        f.write('%d' % servoDefaultValue)
+                    finally:
+                        f.close()
+
     finally:
         print('[Server] Closing the connection...')
         connection.close()
@@ -306,6 +318,16 @@ server_socket.bind(server_address)
 
 stopTimer()
 signal.signal(signal.SIGINT, signal_handler)
+
+# set default servo angle
+servoDefaultValue = 0
+try:
+    f = open('servoDefaultValue.txt', 'r')
+    servoDefaultValue = int(f.read())
+except:
+    servoDefaultValue = 330
+finally:
+    f.close()
 
 while True:
     print('[Server] ### Listening for connection...')
@@ -317,7 +339,7 @@ while True:
     time.sleep(1) # GPIO warmup
     try:
         print('[Server] %s is now connected.' % client_address[0])
-        startServer(connection, client_address, sendComm)
+        startServer(connection, client_address, sendComm, servoDefaultValue)
     except Exception as e:
         print('[Server] ERROR: %s' % e)
     finally:
