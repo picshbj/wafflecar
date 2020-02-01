@@ -339,7 +339,7 @@ while True:
     time.sleep(1) # GPIO warmup
     try:
         print('[Server] %s is now connected.' % client_address[0])
-        startServer(connection, client_address, sendComm, servoDefaultValue)
+        startServer(connection, client_address, sendComm)
     except Exception as e:
         print('[Server] ERROR: %s' % e)
     finally:
