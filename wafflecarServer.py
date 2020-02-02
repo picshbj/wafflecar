@@ -322,7 +322,7 @@ signal.signal(signal.SIGINT, signal_handler)
 # set default servo angle
 servoDefaultValue = 0
 try:
-    f = open('servoDefaultValue.txt', 'r')
+    f = open('/root/servoDefaultValue.txt', 'r')
     servoDefaultValue = int(f.read())
 except:
     servoDefaultValue = 330
