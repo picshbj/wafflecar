@@ -160,10 +160,10 @@ def vehicle_turn(angle):
     # servo_max = 520
     
     # input angle -> 110 ~ 190
-    if angle < 110:
-        angle = 110
-    elif angle > 190:
-        angle = 190
+    if angle < 100:
+        angle = 100
+    elif angle > 200:
+        angle = 200
 
     angle = angle + servoDefaultValue
         
