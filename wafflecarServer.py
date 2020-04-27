@@ -304,7 +304,7 @@ def startServer(connection, client_address, sendComm):
                 if len(data) is 5 and data[4] == 'E':
                     servoDefaultValue = int(data[1:4])
                     try:
-                        f = open('servoDefaultValue.txt', 'w')
+                        f = open('/root/servoDefaultValue.txt', 'w')
                         f.write('%d' % servoDefaultValue)
                     finally:
                         f.close()
