@@ -1,5 +1,5 @@
 f = open('network', 'r')
-o = open('network', 'w')
+o = open('network2', 'w')
 
 for line in f:    
     o.write(line)
